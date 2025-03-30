@@ -1,6 +1,7 @@
 const express = require('express');
 const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const cors = require('cors');
 
 // connect DB
 require('./db/connection');
@@ -14,6 +15,7 @@ const Messages = require('./models/Messages');
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(cors());
 
 const port = process.env.PORT || 8000;
 
@@ -80,10 +82,8 @@ app.post('/api/login', async (req, res, next) => {
               $set: { token }
             })
             user.save();
-            next()
+            return res.status(200).json({ user: { email: user.email, fullName: user.fullName }, token: token })
           })
-
-          res.status(200).json({ user: { email: user.email, fullName: user.fullName }, token: user.token })
         }
       }
     }
